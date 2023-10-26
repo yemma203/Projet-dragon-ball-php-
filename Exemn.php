@@ -1,5 +1,4 @@
 <?php
-<?php
 class Personnage{
     public $nom;
     public $niveau_de_vie;
@@ -12,6 +11,10 @@ class Personnage{
         $this->puissances_attaque = $PA;
         $this->attaque = $A;
     }
+    //public function AfficherStatistique($niveau_de_vie,$puissances_attaque){
+        //echo "Niveau de vie :".$this->$niveau_de_vie;
+        //echo "Puissanc de l'attaque :".$this->$puissances_attaque;
+    //}
 }
 class Heros extends Personnage{
     public function __construct($N,$NV,$PA,$A){
@@ -35,7 +38,7 @@ class Heros extends Personnage{
     }
     public function attaquer($nom_vilain)
     {
-        echo $this -> nom . " attaque " . $nom_vilain; 
+        echo $this -> nom . " attaque " . $nom_vilain. " avec". $this -> attaque; 
         echo "\n";
     }
     public function prendre_degat($vie_Vilain)
@@ -50,6 +53,7 @@ class Heros extends Personnage{
             return "true";
         }
     }
+
 }
 
 class Vilain extends Personnage{
@@ -74,7 +78,7 @@ class Vilain extends Personnage{
     }
     public function attaquer($nom_hero)
     {
-        echo $this -> nom . " attaque " . $nom_hero; 
+        echo $this -> nom . " attaque " . $nom_hero. " avec ". $this -> attaque; 
         echo "\n";
     }
     public function prendre_degat($vie_hero)
@@ -164,6 +168,7 @@ public function gerer_attaque($attaque1,$attaque2,$hero,$vilain){
     }
 }
 
+
 public function fin_combat($hero,$vilain){
     $aleatoir = rand(0,1);
     if($hero -> niveau_de_vie > $vilain -> niveau_de_vie){
@@ -180,12 +185,18 @@ public function fin_combat($hero,$vilain){
             echo $hero -> nom." a gagné ";
         }
     }
+    return $hero->niveau_de_vie;
 }
-
-// public function deuxieme_combat
-
+ public function nouveau_combat($nouveau_vilain,$niveau_de_vie_hero,$hero){
+        echo "\n Bien joué vous passez au second combat ";
+        // $nouveau_vilain = $this -> choix_vilain();
+        if($niveau_de_vie_hero > 0){
+            $r1 = $this -> gerer_attaque_hero($hero,$nouveau_vilain);
+            $r2 = $this -> gerer_attaque_vilain($hero,$nouveau_vilain);
+            $this -> gerer_attaque($r1,$r2,$hero,$nouveau_vilain);
+        }
+    }
 }
-
 
 $Hero1 = new Heros("Goku",3,5,"Boule de feu");
 $Hero2 = new Heros("Vegeta",3,4,"Boule de feu");
@@ -204,8 +215,12 @@ $h = $Game -> test_hero($choix);
 $v = $Game -> choix_vilain();
 $Game->gerer_attaque($Game -> gerer_attaque_hero($h, $v),
 $Game -> gerer_attaque_vilain($h, $v),$h,$v);
+//$Hero1 ->AfficherStatistique($niveau_de_vie,$puissances_attaque);
+
 // echo "\n";
-$Game -> fin_combat($h,$v);
+echo "Voici votre nouveau combat ";
+$nouveau_vilain = $Game -> choix_vilain();
+$Game -> nouveau_combat($nouveau_vilain,$Game -> fin_combat($h,$v),$h);
 
 
 
@@ -215,10 +230,6 @@ $Game -> fin_combat($h,$v);
 
 
 
-
-
-
-?>
 
 
 
