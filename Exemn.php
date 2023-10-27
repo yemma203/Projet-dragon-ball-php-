@@ -1,4 +1,5 @@
 <?php
+
 class Personnage{
     public $nom;
     public $niveau_de_vie;
@@ -111,6 +112,7 @@ class Jeu{
             }
         }
     }
+    // Permet 
     public function test_hero($hero_user){
         foreach($this->liste_heros as $k => $v){
             foreach($v as $k2 => $v2){
@@ -149,28 +151,25 @@ class Jeu{
     
     
 
-public function gerer_attaque($hero,$vilain){
-    $s = 0;
-    $paire = 0;
-    while ($hero -> niveau_de_vie > 0 && $vilain -> niveau_de_vie > 0){
-        if($paire %2==0)
-        {
-            $this -> gerer_attaque_hero($hero,$vilain);
-            echo "Point de vie de l'Heros : " . $hero->niveau_de_vie . "\n";
-            echo "Point de vie du Vilain : " . $vilain->niveau_de_vie . "\n";
-            $paire++;
+    public function gerer_attaque($hero, $vilain){
+        $s = 0;
+        $paire = 0;
+        while ($hero->niveau_de_vie > 0 && $vilain->niveau_de_vie > 0){
+            if($paire % 2 == 0){
+                $this->gerer_attaque_vilain($hero, $vilain);
+                echo "Point de vie de l'Heros : " . $hero->niveau_de_vie . "\n";
+                echo "Point de vie du Vilain : " . $vilain->niveau_de_vie . "\n";
+                $paire++;
+            }
+            else{
+                $this->gerer_attaque_hero($hero, $vilain);
+                echo "Point de vie de l'Heros : " . $hero->niveau_de_vie . "\n";
+                echo "Point de vie du Vilain : " . $vilain->niveau_de_vie . "\n";
+                $paire++;
+            }
         }
-        else
-        {
-            $this -> gerer_attaque_vilain($hero,$vilain);
-            echo "Point de vie de l'Heros : " . $hero->niveau_de_vie . "\n";
-            echo "Point de vie du Vilain : " . $vilain->niveau_de_vie . "\n";
-            $paire++;
-        }
-
-
     }
-}
+    
 public function combat(){
     $this -> afficher_heros();
     $choix = readline("Entre le nom de votre hero ");
@@ -195,7 +194,7 @@ public function combat(){
             }
             elseif($r ==1)
             {
-                // popen("cls", "w");
+                popen("cls", "w");
                 echo "\nVous avez gagné ton deuxième combat, félicitations à vous\n";
                 echo "Bonne chance pour le prochain match\n";
                 $v = $this->choix_vilain();
@@ -205,29 +204,16 @@ public function combat(){
                 $r++;
             }
             elseif($r==2){
-                   // popen("cls", "w");
+                   popen("cls", "w");
                    echo "\nVous avez gagné ton troisième combat, félicitations à vous\n";
                    echo "La partie est fini ";
-                   echo "Le niveau 2 arrive bientôt préparez-vous";
-                   echo "Bonne chance pour le prochain match\n";
-                   $v = $this->choix_vilain();
-                   $h->debloquer("Kameya avancé", 65);
-                   $this->gerer_attaque($h, $v); // Correction ici
-                   $f = $this->fin_combat($h, $v);
-                   $r++;
-                   break; 
+                   $this -> sauvegarder($h);
+                   return ; 
             }
         }
         echo "Vous avez perdu votre". $r. "eme combat contre ". $v->nom ."\n";
         echo "Mise à jour à venir pour la demande de rejouer ";
     }
-
-
-public function menu(){
-    $Menu = readline("1) Jouer \n 2) Quitter \n");
-    $s = 3;
-    $this -> combat();
-}
 
 public function fin_combat($hero, $vilain) {
     if ($hero->niveau_de_vie > $vilain->niveau_de_vie) {
@@ -247,21 +233,74 @@ public function fin_combat($hero, $vilain) {
         }
     }
 }
+public function sauvegarder($hero) {
+        $donnees_sauvegarde = array(
+            'nom' => $hero->nom,
+            'niveau_de_vie' => $hero->niveau_de_vie,
+            'niveau_puissance' => $hero->puissances_attaque,
+            'attaque' => $hero->attaque
+        );
+
+        $nom_du_fichier_sauvegarde = 'sauvegarde.txt';
+
+        // Sauvegardez le tableau de sauvegarde dans un fichier
+        file_put_contents($nom_du_fichier_sauvegarde, serialize($donnees_sauvegarde));
+    }
+
+
+
+
 
 }
 
-$nom_utilisateur = readline("Entrez votre nom \n");
-// $Menu = readline("1) Jouer \n 2) Quitter \n");
-$Hero1 = new Heros("Goku",200,40,"Boule de feu");
-$Hero2 = new Heros("Vegeta", 200,40,"Boule de feu");
-$Vilain1 = new Vilain("Freezer",100,30,"Boule de feu");
-$Vilain2 = new Vilain("Broli",100,60,"Boule de feu");
 
-$Game = new Jeu(array($Hero1 -> nom, $Hero1 -> niveau_de_vie, $Hero1 -> puissances_attaque, $Hero1 -> attaque),
-array($Hero2 -> nom, $Hero2 -> niveau_de_vie, $Hero2 -> puissances_attaque, $Hero2 -> attaque),
-array($Vilain1 -> nom, $Vilain1 -> niveau_de_vie, $Vilain1 -> puissances_attaque, $Vilain1 -> attaque),
-array($Vilain2 -> nom, $Vilain2 -> niveau_de_vie, $Vilain2 -> puissances_attaque, $Vilain2 -> attaque));
+$Menu = readline("1. Jouer \n 2. Quitter");
+popen("cls", "w");
+switch ($Menu) {
+    case "1":
+        $nom_utilisateur = readline("Entrez votre nom \n");
+    function niveau1(){
+    // $Menu = readline("1) Jouer \n 2) Quitter \n");
+         popen("cls", "w");
+        $Hero1 = new Heros("Goku",200,40,"Boule de feu");
+        $Hero2 = new Heros("Vegeta", 200,40,"Boule de feu");
+        $Vilain1 = new Vilain("Freezer",100,30,"Boule de feu");
+        $Vilain2 = new Vilain("Broli",100,60,"Boule de feu");
 
-$Game -> combat();
+        $Game = new Jeu(array($Hero1 -> nom, $Hero1 -> niveau_de_vie, $Hero1 -> puissances_attaque, $Hero1 -> attaque),
+        array($Hero2 -> nom, $Hero2 -> niveau_de_vie, $Hero2 -> puissances_attaque, $Hero2 -> attaque),
+        array($Vilain1 -> nom, $Vilain1 -> niveau_de_vie, $Vilain1 -> puissances_attaque, $Vilain1 -> attaque),
+        array($Vilain2 -> nom, $Vilain2 -> niveau_de_vie, $Vilain2 -> puissances_attaque, $Vilain2 -> attaque));
+
+        $Game -> combat();
+        // return ;
+    }
+        function niveau2(){
+            $Hero1 = new Heros("Trunk",200,45,"Boule de feu");
+            $Hero2 = new Heros("Gohan", 200,45,"Boule de feu");
+            $Vilain1 = new Vilain("Boo",100,50,"Boule de feu");
+            $Vilain2 = new Vilain("Cell",100,40,"Boule de feu");   
+            $Game = new Jeu(array($Hero1 -> nom, $Hero1 -> niveau_de_vie, $Hero1 -> puissances_attaque, $Hero1 -> attaque),
+            array($Hero2 -> nom, $Hero2 -> niveau_de_vie, $Hero2 -> puissances_attaque, $Hero2 -> attaque),
+            array($Vilain1 -> nom, $Vilain1 -> niveau_de_vie, $Vilain1 -> puissances_attaque, $Vilain1 -> attaque),
+            array($Vilain2 -> nom, $Vilain2 -> niveau_de_vie, $Vilain2 -> puissances_attaque, $Vilain2 -> attaque));
+            $Game -> combat();
+            $Game -> sauvegarder();
+        }
+
+        function jeu(){
+        niveau1();
+        $demander = readline("Voulez-vous continuer? ");
+        if($demander=="oui"){
+            niveau2();
+        }
+        }
+        file_put_contents('sauvegarde.txt', serialize($donnees_sauvegarde));
+        jeu();
+    case "2":
+        echo "Au revoir à la prochaine ";
+
+
+}
 
 ?>
