@@ -1,5 +1,5 @@
 <?php
-
+//Creation d'une class Personnage avec differents attribut
 class Personnage{
     public $nom;
     public $niveau_de_vie;
@@ -13,6 +13,7 @@ class Personnage{
         $this->attaque = $A;
     }
 }
+//Creation de la class Heros qui herite de la class Personnage
 class Heros extends Personnage{
     public $liste_attaque;
     public $Liste;
@@ -22,17 +23,18 @@ class Heros extends Personnage{
         print_r($this->Liste);
         parent::__construct($N, $NV, $PA, $A);
     }
-    
+    //Creation de la methode debloquer permet d'ajouter une nouvelle attaque et ses dégâts à la liste des attaques pour un héros. 
     public function debloquer ($nouvelle_attaque, $nouveau_degat) {
+        // Crée un tableau contenant la nouvelle attaque et ses dégâts
         array_push($this -> Liste, array($nouvelle_attaque, $nouveau_degat));
     }
-
+     //Creation de la methode attaquer qui permet à un héros d'effectuer une attaque contre un vilain 
     public function attaquer($nom_vilain)
-    {
+    { //Cela va afficher le nom du vilain que le heros souhaite attaquer
         echo $this->nom . " attaque " . $nom_vilain;
         echo "\n";
     }
-
+    //Creation de la methode prendre_degat permet au héros de subir des dégâts causés par un vilain à partir d'une attaque que le vilain a choisi.
     public function prendre_degat($puissance_vilain, $attaque_choisie)
     {
         foreach ($this->Liste as $attaque) {
@@ -45,7 +47,7 @@ class Heros extends Personnage{
     
 
 
-
+    //Creation de la methode qui fais que si le niveau de vie du Vilain est egal a 0 le Hero a gagné
     public function mourir()
     {
         if($this -> niveau_de_vie == 0){
@@ -54,24 +56,24 @@ class Heros extends Personnage{
         }
     }
 }
-
+//Creation de la class Vilain qui herite de la class Personnage
 class Vilain extends Personnage{
     public function __construct($N,$NV,$PA,$A){
         parent::__construct($N,$NV,$PA,$A);
     }
-
+    //Creation de la methode attaquer qui permet à un vilain d'effectuer une attaque contre un hero
     public function attaquer($nom_hero)
     {
         echo $this->nom . " attaque " . $nom_hero;
         echo "\n";
     }
-
+     //Creation de la methode prendre_degat qui permet au vilain de subir des dégâts lorsque le héros l'attaque avec une attaque qu'aura choisi
     public function prendre_degat($puissance_hero, $attaque_choisie)
     {
         $this->niveau_de_vie -= (int) $puissance_hero;
         return $this->niveau_de_vie;
     }
-
+    //Creation de la methode mourir qui quand le Vilain a 0 de point de vie il meurt
     public function mourir()
     {
         if($this -> niveau_de_vie == 0){
@@ -80,7 +82,7 @@ class Vilain extends Personnage{
         }
     }
 }
-
+//Creation de la class Jeu qui permet de gerer le combat
 class Jeu{
     public $hero1;
     public $hero2;
@@ -98,7 +100,7 @@ class Jeu{
         $this -> liste_vilains = array($V1,$V2);
 
     }
-
+    //Creation de methode afficher_heros qui affiche les stats des heros et leur heros
     public function afficher_heros()
     {
         echo "Voici les héros avec leurs stats \n";
