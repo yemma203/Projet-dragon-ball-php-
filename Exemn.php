@@ -11,39 +11,37 @@ class Personnage{
         $this->puissances_attaque = $PA;
         $this->attaque = $A;
     }
-    //public function AfficherStatistique($niveau_de_vie,$puissances_attaque){
-        //echo "Niveau de vie :".$this->$niveau_de_vie;
-        //echo "Puissanc de l'attaque :".$this->$puissances_attaque;
-    //}
 }
 class Heros extends Personnage{
-    public function __construct($N,$NV,$PA,$A){
-        parent::__construct($N,$NV,$PA,$A);
+    public $liste_attaque;
+    public $Liste;
+    public function __construct($N, $NV, $PA, $A){
+        $this->liste_attaque = array($A, $PA);
+        $this->Liste = array($this->liste_attaque);
+        print_r($this->Liste);
+        parent::__construct($N, $NV, $PA, $A);
     }
-
-    public function getNom()
+    
+    public function debloquer ($nouvelle_attaque, $nouveau_degat) {
+        array_push($this -> Liste, array($nouvelle_attaque, $nouveau_degat));
+    }
+    public function attaquer($nom_vilain, $attaque_choisi )
     {
-        return $this->nom;
-    }
-    public function getNV()
-    {
-        return $this->niveau_de_vie;
-    }
-    public function getPuissancesAttaque()
-    {
-        return $this->attaque;
-    }
-    public function getAttaque(){
-        return $this->attaque;
-    }
-    public function attaquer($nom_vilain)
-    {
-        echo $this -> nom . " attaque " . $nom_vilain. " avec". $this -> attaque; 
+        echo $this -> nom . " attaque " . $nom_vilain; 
+        return $attaque_choisi;
         echo "\n";
     }
-    public function prendre_degat($vie_Vilain)
+
+      
+    public function prendre_degat($puissance_vilain,$attaque_choisie)
     {
-        (int) $this -> puissances_attaque -= (int) $vie_Vilain;
+        foreach($this -> Liste as $attaque){
+            if($attaque === $attaque_choisie){
+                $this -> niveau_de_vie -= (int) $puissance_vilain  . "\n";  
+                echo $this->nom . " a attaqué " . $nom_vilain . " avec " . $attaque_choisie . " causant " . $this -> puissances_attaque . " points de dégâts.\n";
+                return $this -> niveau_de_vie; 
+            }
+        }
     }
 
     public function mourir()
@@ -53,37 +51,21 @@ class Heros extends Personnage{
             return "true";
         }
     }
-
 }
 
 class Vilain extends Personnage{
     public function __construct($N,$NV,$PA,$A){
         parent::__construct($N,$NV,$PA,$A);
     }
-    public function getNom()
-    {
-        return $this->nom;
-    }
-    public function getNV()
-    {
-        return $this->niveau_de_vie;
-    }
-    public function getPuissancesAttaque()
-    {
-        return $this->attaque;
-    }
-    public function getAttaque()
-    {
-        return $this->attaque;
-    }
     public function attaquer($nom_hero)
     {
-        echo $this -> nom . " attaque " . $nom_hero. " avec ". $this -> attaque; 
+        echo $this -> nom . " attaque " . $nom_hero; 
         echo "\n";
     }
-    public function prendre_degat($vie_hero)
+    public function prendre_degat($puissance_hero)
     {
-        (int) $this -> puissances_attaque -=(int) $vie_hero;
+       $this -> niveau_de_vie -= (int) $puissance_hero;
+       return $this -> niveau_de_vie;
     }
 
     public function mourir()
@@ -143,11 +125,14 @@ class Jeu{
         return $vilain;
     }
 
-public function gerer_attaque_hero($hero,$vilain){
-        $hero -> attaquer($vilain -> nom);
-        $hero -> prendre_degat($vilain -> puissances_attaque);
-        return $vilain -> niveau_de_vie;
+    public function gerer_attaque_hero($hero, $vilain){
+        $nom_vilain = $vilain->nom;
+        $attaque_choisi = readline("Entrez l'attaque que vous voulez utiliser ");
+        $hero->prendre_degat($vilain->puissances_attaque, $nom_vilain, $attaque_choisi);
+        return $vilain->niveau_de_vie;
     }
+    
+    
 
 public function gerer_attaque_vilain($hero,$vilain){
     $vilain -> attaquer($hero -> nom);
@@ -155,82 +140,87 @@ public function gerer_attaque_vilain($hero,$vilain){
     return $hero -> niveau_de_vie;
     }
 
-public function gerer_attaque($attaque1,$attaque2,$hero,$vilain){
+public function gerer_attaque($hero,$vilain){
     $s = 0;
-    $attaque1 = $this -> gerer_attaque_vilain($hero,$vilain);
-    $attaque2 = $this -> gerer_attaque_hero($hero,$vilain);
-    while ($s <1){
-        echo "Voici le point de vie de l'Heros ". $attaque1;
-        echo "\n";
-        echo "Voici le point de vie du Vilain ".$attaque2;
-        echo "\n";
-        $s++;
-    }
-}
-
-
-public function fin_combat($hero,$vilain){
-    $aleatoir = rand(0,1);
-    if($hero -> niveau_de_vie > $vilain -> niveau_de_vie){
-       echo $hero -> nom. " a gagné ";
-    }
-    elseif($hero -> niveau_de_vie > $vilain -> niveau_de_vie){
-        echo $vilain -> nom. " a gagné ";
-    }
-    else{
-        if($aleatoir == 0){
-            echo $vilain -> nom ." a gagné ";
+    $paire = 0;
+    while ($hero -> niveau_de_vie > 0 && $vilain -> niveau_de_vie > 0){
+        if($paire %2==0)
+        {
+            $this -> gerer_attaque_hero($hero,$vilain);
+            echo "\n";
+            $paire++;
         }
-        else{
-            echo $hero -> nom." a gagné ";
-        }
-    }
-    return $hero->niveau_de_vie;
-}
- public function nouveau_combat($nouveau_vilain,$niveau_de_vie_hero,$hero){
-        echo "\n Bien joué vous passez au second combat ";
-        // $nouveau_vilain = $this -> choix_vilain();
-        if($niveau_de_vie_hero > 0){
-            $r1 = $this -> gerer_attaque_hero($hero,$nouveau_vilain);
-            $r2 = $this -> gerer_attaque_vilain($hero,$nouveau_vilain);
-            $this -> gerer_attaque($r1,$r2,$hero,$nouveau_vilain);
+        else
+        {
+            $this -> gerer_attaque_vilain($hero,$vilain);
+            echo "\n";
+            $paire++;
         }
     }
 }
+public function combat(){
+    $this -> afficher_heros();
+    $choix = readline("Entre le nom de votre hero ");
+    $h = $this  -> test_hero($choix);
+    $v = $this -> choix_vilain();
+    $this -> gerer_attaque($h,$v);
+    $f = $this -> fin_combat($h,$v);
+    
+    if($f == "gagné"){
+        // popen("cls", "w");
+        echo "\nVous avez gagné le premier combat félicitation à vous\n";
+        echo "Bonnne chance pour le prochain match \n";
+        $v = $this -> choix_vilain();
+        $h -> debloquer("Kameya", 6);
+        $this -> gerer_attaque($h,$v);
+        $f = $this -> fin_combat($h,$v);
+    }
+    else
+    {
+        echo "Vous avez perdu contre ". $v -> nom;
+    }
 
-$Hero1 = new Heros("Goku",3,5,"Boule de feu");
-$Hero2 = new Heros("Vegeta",3,4,"Boule de feu");
-$Vilain1 = new Vilain("Freezer",3,3,"Boule de feu");
-$Vilain2 = new Vilain("Broli",2,6,"Boule de feu");
+    }
+
+public function menu(){
+    $Menu = readline("1) Jouer \n 2) Quitter \n");
+    $s = 3;
+    $this -> combat();
+}
+
+public function fin_combat($hero, $vilain) {
+    if ($hero->niveau_de_vie > $vilain->niveau_de_vie) {
+        echo $hero->nom . " a gagné\n";
+        return "gagné";
+    } elseif ($hero->niveau_de_vie < $vilain->niveau_de_vie) {
+        echo $vilain->nom . " a gagné\n";
+        echo "GAME OVER\n";
+    } else {
+        $question = readline("Combien d'auteurs y a-t-il pour le manga DBZ? ");
+        if ($question == 2) {
+            echo $vilain->nom . " a gagné\n";
+            echo "GAME OVER\n";
+        } else {
+            echo $hero->nom . " a gagné\n";
+            return "gagné";
+        }
+    }
+}
+
+}
+
+$nom_utilisateur = readline("Entrez votre nom \n");
+// $Menu = readline("1) Jouer \n 2) Quitter \n");
+$Hero1 = new Heros("Goku",30,15,"Boule de feu");
+$Hero2 = new Heros("Vegeta",30,15,"Boule de feu");
+$Vilain1 = new Vilain("Freezer",30,20,"Boule de feu");
+$Vilain2 = new Vilain("Broli",35,15,"Boule de feu");
 
 $Game = new Jeu(array($Hero1 -> nom, $Hero1 -> niveau_de_vie, $Hero1 -> puissances_attaque, $Hero1 -> attaque),
 array($Hero2 -> nom, $Hero2 -> niveau_de_vie, $Hero2 -> puissances_attaque, $Hero2 -> attaque),
 array($Vilain1 -> nom, $Vilain1 -> niveau_de_vie, $Vilain1 -> puissances_attaque, $Vilain1 -> attaque),
 array($Vilain2 -> nom, $Vilain2 -> niveau_de_vie, $Vilain2 -> puissances_attaque, $Vilain2 -> attaque));
 
-$Game -> afficher_heros();
-// $Game -> gerer_game($Game -> choix_hero(),$Game -> choix_vilain());
-$choix = readline("Entre le nom de votre hero ");
-$h = $Game -> test_hero($choix);
-$v = $Game -> choix_vilain();
-$Game->gerer_attaque($Game -> gerer_attaque_hero($h, $v),
-$Game -> gerer_attaque_vilain($h, $v),$h,$v);
-//$Hero1 ->AfficherStatistique($niveau_de_vie,$puissances_attaque);
-
-// echo "\n";
-echo "Voici votre nouveau combat ";
-$nouveau_vilain = $Game -> choix_vilain();
-$Game -> nouveau_combat($nouveau_vilain,$Game -> fin_combat($h,$v),$h);
-
-
-
-
-
-
-
-
-
-
-
+$Game -> combat();
 
 ?>
