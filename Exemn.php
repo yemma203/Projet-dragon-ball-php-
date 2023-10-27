@@ -114,7 +114,7 @@ class Jeu{
             }
         }
     }
-    // Permet 
+    // Permet de créer u objet héro en fonction de l'hero entré par le jouer
     public function test_hero($hero_user){
         foreach($this->liste_heros as $k => $v){
             foreach($v as $k2 => $v2){
@@ -125,13 +125,14 @@ class Jeu{
             }
     }
 }
+    //Choisir un héro aléatoirement
     public function choix_vilain(){
         $aleatoire = rand(0,count($this->liste_vilains)-1);
         $resultat = $this->liste_vilains[$aleatoire];
         $vilain = new Vilain($resultat[0],$resultat[1],$resultat[2],$resultat[3]);
         return $vilain;
     }
-
+    //De gérer attaque du vilain vers l'hero
     public function gerer_attaque_vilain($hero, $vilain){
         $vilain->attaquer($hero->nom); // Le vilain attaque le héros
         // var_dump($hero -> Liste);
@@ -144,7 +145,7 @@ class Jeu{
         return $hero->niveau_de_vie;
     }
     
-    
+    // Gérer l'attaque de l'hero vers le vilain
     public function gerer_attaque_hero($hero, $vilain){
         $hero->attaquer($vilain->nom); // Le héros attaque le vilain
         $vilain->prendre_degat($hero->puissances_attaque, $hero->attaque); // Le vilain prend des dégâts du héros
@@ -152,7 +153,7 @@ class Jeu{
     }
     
     
-
+    // Permet de gérer l'attaque entre l'héro et le vilain
     public function gerer_attaque($hero, $vilain){
         $s = 0;
         $paire = 0;
@@ -171,7 +172,7 @@ class Jeu{
             }
         }
     }
-    
+//Permet de gérer le combat entre les deux
 public function combat(){
     $this -> afficher_heros();
     $choix = readline("Entre le nom de votre hero ");
@@ -216,7 +217,7 @@ public function combat(){
         echo "Vous avez perdu votre". $r. "eme combat contre ". $v->nom ."\n";
         echo "Mise à jour à venir pour la demande de rejouer ";
     }
-
+//Permet de dire qui a gagné et qui a perdu 
 public function fin_combat($hero, $vilain) {
     if ($hero->niveau_de_vie > $vilain->niveau_de_vie) {
         echo $hero->nom . " a gagné\n";
@@ -235,6 +236,7 @@ public function fin_combat($hero, $vilain) {
         }
     }
 }
+    //Sauvegarde les informations du joueur dans un fichier
 public function sauvegarder($hero) {
         $donnees_sauvegarde = array(
             'nom' => $hero->nom,
@@ -256,6 +258,7 @@ public function sauvegarder($hero) {
 }
 
 
+//Gère le menu et les parties du joueur avec des niveaux
 $Menu = readline("1. Jouer \n 2. Quitter");
 popen("cls", "w");
 switch ($Menu) {
